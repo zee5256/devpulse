@@ -9,6 +9,10 @@ top repositories, 3/6/12-month trends, and a transparent 0–100 Developer Score
 Built as a free, production-ready portfolio project with Next.js 16, Prisma,
 Neon Postgres, Auth.js, and the GitHub GraphQL API.
 
+[![CI](https://github.com/zee5256/devpulse/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/zee5256/devpulse/actions/workflows/ci.yml)
+
+![DevPulse landing page](docs/screenshots/landing.png)
+
 - **Live app:** https://devpulse-rouge.vercel.app
 - **Repository:** https://github.com/zee5256/devpulse
 - **Demo profiles:** [/u/torvalds](https://devpulse-rouge.vercel.app/u/torvalds), [/u/sindresorhus](https://devpulse-rouge.vercel.app/u/sindresorhus), [/u/gaearon](https://devpulse-rouge.vercel.app/u/gaearon), [/u/cassidoo](https://devpulse-rouge.vercel.app/u/cassidoo)
@@ -92,6 +96,22 @@ unlocks favorites and the personal dashboard.
   domain models.
 - **Deduplicated profile fetches** between `generateMetadata` and page render
   using React `cache`.
+
+---
+
+## Screenshots
+
+| Profile dashboard | Compare mode |
+| --- | --- |
+| ![Developer profile dashboard](docs/screenshots/profile.png) | ![Head-to-head developer comparison](docs/screenshots/compare.png) |
+
+| Language, trends, and repositories | Dark mode |
+| --- | --- |
+| ![Language breakdown, contribution trend, and top repositories](docs/screenshots/profile-insights.png) | ![Profile dashboard in dark mode](docs/screenshots/profile-dark.png) |
+
+<p align="center">
+  <img src="docs/screenshots/mobile-profile.png" alt="Mobile profile dashboard" width="320" />
+</p>
 
 ---
 
@@ -362,6 +382,8 @@ prisma/
   schema.prisma, migrations/, seed.ts
 tests/
   score.test.ts, normalize.test.ts
+docs/
+  screenshots/                    README images
 ```
 
 ---
