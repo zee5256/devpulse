@@ -9,9 +9,9 @@ top repositories, 3/6/12-month trends, and a transparent 0–100 Developer Score
 Built as a free, production-ready portfolio project with Next.js 16, Prisma,
 Neon Postgres, Auth.js, and the GitHub GraphQL API.
 
-- **Live app:** https://devpulse.vercel.app
+- **Live app:** https://devpulse-rouge.vercel.app
 - **Repository:** https://github.com/zee5256/devpulse
-- **Demo profiles:** [/u/torvalds](https://devpulse.vercel.app/u/torvalds), [/u/sindresorhus](https://devpulse.vercel.app/u/sindresorhus), [/u/gaearon](https://devpulse.vercel.app/u/gaearon), [/u/cassidoo](https://devpulse.vercel.app/u/cassidoo)
+- **Demo profiles:** [/u/torvalds](https://devpulse-rouge.vercel.app/u/torvalds), [/u/sindresorhus](https://devpulse-rouge.vercel.app/u/sindresorhus), [/u/gaearon](https://devpulse-rouge.vercel.app/u/gaearon), [/u/cassidoo](https://devpulse-rouge.vercel.app/u/cassidoo)
 
 ---
 

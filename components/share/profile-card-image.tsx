@@ -14,7 +14,7 @@ function siteHost(): string {
   try {
     return new URL(siteConfig.url).host;
   } catch {
-    return "devpulse.vercel.app";
+    return "devpulse-rouge.vercel.app";
   }
 }
 
