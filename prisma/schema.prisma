@@ -1,0 +1,106 @@
+// DevPulse — Prisma schema
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Product models
+// ---------------------------------------------------------------------------
+
+model User {
+  id             String    @id @default(cuid())
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  githubUsername String?   @unique
+  createdAt      DateTime  @default(now())
+
+  accounts  Account[]
+  sessions  Session[]
+  favorites Favorite[]
+}
+
+model ProfileSnapshot {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  data      Json
+  score     Int
+  fetchedAt DateTime @default(now())
+
+  @@index([fetchedAt])
+  @@index([score])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  username  String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, username])
+  @@index([userId, createdAt])
+  @@index([username])
+}
+
+// Postgres-backed fallback for rate limiting when Upstash is not configured.
+model RateLimit {
+  key     String   @id
+  count   Int      @default(1)
+  resetAt DateTime
+
+  @@index([resetAt])
+}
+
+// ---------------------------------------------------------------------------
+// Auth.js (NextAuth) adapter models
+// ---------------------------------------------------------------------------
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}

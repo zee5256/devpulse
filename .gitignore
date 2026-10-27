@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Production
+build/
+dist/
+
+# Local configuration — never commit secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Vercel
+.vercel
+
+# Testing
+coverage/
+
+# Misc
+.DS_Store
+Thumbs.db
+*.log

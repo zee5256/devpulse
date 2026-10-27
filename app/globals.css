@@ -1,0 +1,209 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f5f7f4;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --foreground: #0c1511;
+  --muted: #edf1ed;
+  --muted-foreground: #5d6b63;
+  --border: #dde5de;
+  --accent: #047857;
+  --accent-hover: #03684a;
+  --accent-foreground: #ffffff;
+  --accent-soft: #e7f5ee;
+  --ring: color-mix(in oklab, #047857 40%, transparent);
+  --success: #059669;
+  --warning: #b45309;
+  --danger: #be123c;
+  --heat-0: #e9efe9;
+  --heat-1: #c6e9d7;
+  --heat-2: #86d6b4;
+  --heat-3: #3eb489;
+  --heat-4: #087a58;
+  --chart-grid: #e3e9e3;
+  --shadow-soft: 0 1px 2px rgb(10 25 16 / 0.04), 0 12px 40px rgb(10 25 16 / 0.05);
+}
+
+.dark {
+  --background: #070b09;
+  --surface: #0b110e;
+  --card: #0e1512;
+  --foreground: #f1f7f3;
+  --muted: #141d18;
+  --muted-foreground: #96a79d;
+  --border: #1d2a23;
+  --accent: #4ade80;
+  --accent-hover: #6ee7a0;
+  --accent-foreground: #052e16;
+  --accent-soft: #0c2418;
+  --ring: color-mix(in oklab, #4ade80 40%, transparent);
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #fb7185;
+  --heat-0: #111a15;
+  --heat-1: #123526;
+  --heat-2: #155c3d;
+  --heat-3: #1e8b5e;
+  --heat-4: #4ade80;
+  --chart-grid: #1b2821;
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.2), 0 20px 60px rgb(0 0 0 / 0.25);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-inter), ui-sans-serif,
+    system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 25%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    letter-spacing: -0.03em;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+}
+
+@layer components {
+  .surface {
+    @apply rounded-2xl border border-border bg-card;
+  }
+
+  .glass {
+    background: color-mix(in oklab, var(--card) 72%, transparent);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/35 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/40;
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in oklab, var(--border) 60%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--border) 60%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 48px 48px;
+  }
+
+  .bg-dots {
+    background-image: radial-gradient(
+      color-mix(in oklab, var(--accent) 18%, transparent) 1px,
+      transparent 1px
+    );
+    background-size: 18px 18px;
+  }
+
+  .text-gradient {
+    background: linear-gradient(
+      115deg,
+      var(--foreground) 5%,
+      var(--accent) 62%,
+      color-mix(in oklab, var(--accent) 55%, #22d3ee) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .accent-glow {
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--accent) 20%, transparent),
+      0 20px 80px -20px color-mix(in oklab, var(--accent) 35%, transparent);
+  }
+
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+
+  .scrollbar-slim {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--muted-foreground) 30%, transparent)
+      transparent;
+  }
+
+  .scrollbar-slim::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-slim::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--muted-foreground) 25%, transparent);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
