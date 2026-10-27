@@ -35,8 +35,8 @@ DevPulse focuses on the questions that actually matter:
 - **How do two developers compare?** A side-by-side stat table and a radar chart
   built on the same category percentages.
 
-Everything public works without an account. GitHub OAuth is optional and only
-unlocks favorites and the personal dashboard.
+Everything public works without an account. Create a free email/password account
+(or use optional GitHub OAuth) to unlock favorites and your personal dashboard.
 
 ---
 
@@ -69,10 +69,14 @@ unlocks favorites and the personal dashboard.
   tokens, network failures, and unknown users.
 - **SEO**: per-profile metadata, canonical URLs, sitemap, robots, and OG images.
 
-### Signed-in experience (optional)
+### Accounts and signed-in experience
 
-- GitHub OAuth through Auth.js / NextAuth v5 with a Prisma adapter.
-- Database-backed sessions.
+- Email/password signup at `/signup` and sign-in at `/login`.
+- Passwords salted and hashed with Node's `scrypt`; plaintext passwords are never
+  stored.
+- Optional GitHub OAuth through Auth.js / NextAuth v5 with a Prisma adapter.
+- JWT sessions; user records, OAuth accounts, and favorites are stored in Neon
+  Postgres.
 - Save/remove favorites from any profile.
 - Personal dashboard at `/dashboard`, sorted by Developer Score.
 - Favorites API with Zod validation and authenticated access checks.
@@ -200,7 +204,7 @@ flowchart TD
 | Motion | Framer Motion |
 | Charts | Recharts + a custom SVG contribution heatmap |
 | Database | Neon Postgres + Prisma 6 |
-| Auth | Auth.js / NextAuth v5 + `@auth/prisma-adapter` |
+| Auth | Auth.js / NextAuth v5 + `@auth/prisma-adapter` (email/password + optional GitHub OAuth) |
 | GitHub data | GitHub GraphQL API |
 | Validation | Zod 4 |
 | Cache | Upstash Redis (optional) + Postgres fallback |
@@ -221,7 +225,7 @@ the app runs with only Neon + a GitHub token.
 - Node.js 20.9+ (Node 24 recommended)
 - A free [Neon](https://neon.tech) Postgres database
 - A GitHub token with public read access
-- Optional: a GitHub OAuth app for sign-in/favorites
+- Optional: a GitHub OAuth app for GitHub sign-in
 - Optional: an Upstash Redis database for the distributed cache layer
 
 ### 1. Install
@@ -264,7 +268,9 @@ landing page has live examples immediately.
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Create an account at
+[http://localhost:3000/signup](http://localhost:3000/signup) to test favorites
+and the personal dashboard.
 
 > This project uses `next dev --webpack` / `next build --webpack` for portability
 > on machines where the native SWC/Turbopack binary is restricted.
@@ -277,9 +283,9 @@ Open [http://localhost:3000](http://localhost:3000).
 | --- | --- | --- |
 | `DATABASE_URL` | Yes | Pooled Neon/Postgres connection used by the app. |
 | `DIRECT_URL` | Yes | Direct Neon connection used by Prisma migrations. |
-| `AUTH_SECRET` | Yes | Auth.js session encryption secret. |
+| `AUTH_SECRET` | Yes | Auth.js JWT session signing/encryption secret. |
 | `AUTH_URL` | Local only | Base URL for Auth.js in local development. |
-| `AUTH_GITHUB_ID` | Optional | GitHub OAuth app client ID. |
+| `AUTH_GITHUB_ID` | Optional | GitHub OAuth app client ID. Email/password auth works without it. |
 | `AUTH_GITHUB_SECRET` | Optional | GitHub OAuth app client secret. |
 | `GITHUB_TOKEN` | Yes | Server-only GitHub GraphQL token. A fine-grained read-only PAT is recommended. |
 | `NEXT_PUBLIC_SITE_URL` | Yes | Canonical site URL used by metadata, sitemap, and share links. |
@@ -303,8 +309,9 @@ token with a `NEXT_PUBLIC_` prefix.
 3. Add `AUTH_GITHUB_ID` and `AUTH_GITHUB_SECRET`.
 4. Restart the app.
 
-Without OAuth credentials, the public analytics still work. The login page shows
-setup instructions and the header hides the signed-in state.
+Without OAuth credentials, email/password signup and login still work. The
+GitHub button is hidden, and every public route remains fully usable without an
+account.
 
 ---
 
@@ -358,15 +365,17 @@ production build against a temporary Postgres service.
 app/
   api/
     auth/[...nextauth]/route.ts   Auth.js handlers
+    auth/signup/route.ts          Email/password signup API
     card/[username]/route.ts      Downloadable profile card
     favorites/                    Authenticated favorites API
   compare/                        Compare landing + detail routes
   dashboard/                      Signed-in watchlist
-  login/                          OAuth sign-in + setup guidance
+  login/                          Email/password + GitHub sign-in
+  signup/                         Account creation
   u/[username]/                   Profile dashboard + OG image
   layout.tsx, page.tsx, globals.css
 components/
-  auth/                           Login form
+  auth/                           Auth aside, login and signup forms
   compare/                        Compare form, radar, comparison tables
   landing/                        Hero search, preview, demo cards
   layout/                         Header, footer
@@ -377,11 +386,11 @@ lib/
   cache/profile.ts                3h cache + stale-while-revalidate
   github/                         GraphQL query, Zod schemas, normalization
   score/calculate.ts              Transparent Developer Score
-  auth.ts, prisma.ts, rate-limit.ts, redis.ts, validations.ts
+  auth.ts, password.ts, prisma.ts, rate-limit.ts, redis.ts, validations.ts
 prisma/
   schema.prisma, migrations/, seed.ts
 tests/
-  score.test.ts, normalize.test.ts
+  auth.test.ts, score.test.ts, normalize.test.ts
 docs/
   screenshots/                    README images
 ```
@@ -434,12 +443,14 @@ independently of the bundler.
 
 - GitHub tokens and database credentials are server-only.
 - Usernames are validated and sanitized with Zod before any API or database call.
-- Favorites require a valid database session and enforce ownership in the query.
+- Favorites require a valid session and enforce ownership in the query.
+- Passwords are salted and hashed with `scrypt`; plaintext passwords are never
+  stored or logged.
 - API errors return typed JSON without leaking upstream payloads or tokens.
 - Security headers (`nosniff`, frame options, referrer policy, permissions
   policy) are set in `next.config.ts`.
-- Auth.js stores only the account id, display name, email, avatar URL, and saved
-  usernames needed for the product.
+- Auth.js stores only the account id, display name, email, password hash, avatar
+  URL, optional GitHub username, and saved usernames needed for the product.
 - No analytics scripts, tracking pixels, or client-side GitHub token access.
 
 ---
@@ -451,8 +462,8 @@ independently of the bundler.
   contributions are surfaced as a note.
 - The repository sample is the top 100 owned, non-fork repositories ordered by
   stars. Star totals and language percentages use that sample.
-- Auth.js is optional. Without OAuth credentials, favorites and the signed-in
-  dashboard are disabled, but every public route remains fully usable.
+- GitHub OAuth is optional. Email/password accounts work without it, and every
+  public route remains fully usable without an account.
 - DevPulse is independent and not affiliated with GitHub.
 
 ---

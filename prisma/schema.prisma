@@ -22,6 +22,7 @@ model User {
   emailVerified  DateTime?
   image          String?
   githubUsername String?   @unique
+  passwordHash   String?
   createdAt      DateTime  @default(now())
 
   accounts  Account[]

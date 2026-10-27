@@ -24,7 +24,7 @@ export function FavoriteButton({
 
   async function toggle() {
     if (!isSignedIn) {
-      toast.info("Sign in with GitHub to save developers.");
+      toast.info("Sign in to save developers.");
       router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
       return;
     }

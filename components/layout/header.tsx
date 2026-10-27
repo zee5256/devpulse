@@ -78,6 +78,7 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const loginHref = `/login?callbackUrl=${encodeURIComponent(pathname || "/")}`;
+  const signupHref = `/signup?callbackUrl=${encodeURIComponent(pathname || "/")}`;
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 glass">
@@ -166,9 +167,14 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button size="sm" asChild>
-              <Link href={loginHref}>Sign in</Link>
-            </Button>
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href={signupHref}>Sign up</Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link href={loginHref}>Sign in</Link>
+              </Button>
+            </>
           )}
         </div>
 
@@ -233,11 +239,18 @@ export function Header() {
                 Sign out
               </Button>
             ) : (
-              <Button asChild className="w-full">
-                <Link href={loginHref} onClick={() => setMobileOpen(false)}>
-                  Sign in with GitHub
-                </Link>
-              </Button>
+              <div className="grid gap-2">
+                <Button variant="secondary" asChild className="w-full">
+                  <Link href={loginHref} onClick={() => setMobileOpen(false)}>
+                    Sign in
+                  </Link>
+                </Button>
+                <Button asChild className="w-full">
+                  <Link href={signupHref} onClick={() => setMobileOpen(false)}>
+                    Create an account
+                  </Link>
+                </Button>
+              </div>
             )}
           </div>
         </div>
