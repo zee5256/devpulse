@@ -68,6 +68,7 @@ export function MotionFade({
   return (
     <motion.div
       className={className}
+      data-motion-fade=""
       initial={reduceMotion ? false : { opacity: 0, y }}
       whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
